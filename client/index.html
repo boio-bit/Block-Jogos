@@ -2,17 +2,19 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Block Jogos</title>
 
 <style>
 body {
   margin: 0;
-  background: #0a0a0a;
-  overflow: hidden;
   font-family: Arial;
+  background: #0a0a0a;
   color: white;
+  overflow: hidden;
 }
 
+/* PARTICLES */
 #particles {
   position: fixed;
   width: 100%;
@@ -20,6 +22,7 @@ body {
   z-index: 0;
 }
 
+/* CONTAINER */
 .container {
   position: relative;
   z-index: 1;
@@ -29,14 +32,15 @@ body {
   align-items: center;
 }
 
+/* CARD LOGIN */
 .card {
-  width: 350px;
-  padding: 20px;
+  width: 340px;
+  padding: 25px;
+  border-radius: 15px;
   background: rgba(0,0,0,0.75);
   border: 1px solid #ff003c;
-  border-radius: 15px;
+  box-shadow: 0 0 25px rgba(255,0,60,0.3);
   text-align: center;
-  box-shadow: 0 0 25px #ff003c33;
 }
 
 h1 {
@@ -79,12 +83,9 @@ button:hover {
   display: none;
 }
 
-label {
-  font-size: 12px;
-}
-
 a {
   color: #ff003c;
+  font-size: 12px;
 }
 </style>
 
@@ -100,6 +101,7 @@ a {
 
     <h1>BLOCK JOGOS</h1>
 
+    <!-- TABS -->
     <div class="tabs">
       <button onclick="showLogin()">Entrar</button>
       <button onclick="showRegister()">Criar conta</button>
@@ -108,7 +110,7 @@ a {
     <!-- LOGIN -->
     <div id="loginBox">
 
-      <input id="loginEmail" placeholder="Email">
+      <input id="loginEmail" type="email" placeholder="Email">
       <input id="loginPassword" type="password" placeholder="Senha">
 
       <button onclick="login()">Entrar</button>
@@ -118,7 +120,7 @@ a {
     <!-- REGISTER -->
     <div id="registerBox" class="hidden">
 
-      <input id="regEmail" placeholder="Email">
+      <input id="regEmail" type="email" placeholder="Email">
       <input id="regPassword" type="password" placeholder="Senha">
       <input id="regConfirm" type="password" placeholder="Confirmar senha">
 
@@ -140,15 +142,16 @@ a {
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <script>
-// ===== SUPABASE =====
+// ================= SUPABASE =================
 const supabaseUrl = "https://hwffqfjimqjrapzesbaa.supabase.co";
 const supabaseKey = "SUA_KEY_AQUI";
 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-// ===== TELA =====
+// ================= ELEMENTOS =================
 const loginBox = document.getElementById("loginBox");
 const registerBox = document.getElementById("registerBox");
 
+// ================= TABS =================
 function showLogin() {
   loginBox.classList.remove("hidden");
   registerBox.classList.add("hidden");
@@ -159,11 +162,12 @@ function showRegister() {
   registerBox.classList.remove("hidden");
 }
 
+// ================= MSG =================
 function msg(t) {
   document.getElementById("msg").innerText = t;
 }
 
-// ===== LOGIN =====
+// ================= LOGIN =================
 async function login() {
   const email = loginEmail.value;
   const password = loginPassword.value;
@@ -176,9 +180,13 @@ async function login() {
   if (error) return msg("Erro no login");
 
   msg("Login OK 🚀");
+
+  setTimeout(() => {
+    window.location.href = "/dashboard.html";
+  }, 800);
 }
 
-// ===== REGISTER =====
+// ================= REGISTER =================
 async function register() {
   const email = regEmail.value;
   const password = regPassword.value;
@@ -195,10 +203,10 @@ async function register() {
 
   if (error) return msg("Erro ao criar conta");
 
-  msg("Conta criada! Verifique email 🚀");
+  msg("Conta criada! Verifique seu email 🚀");
 }
 
-// ===== PARTICLES (GARANTIDO FUNCIONAR) =====
+// ================= PARTICLES SIMPLES =================
 window.onload = () => {
   const canvas = document.createElement("canvas");
   document.getElementById("particles").appendChild(canvas);
@@ -215,17 +223,18 @@ window.onload = () => {
 
   let particles = [];
 
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 80; i++) {
     particles.push({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
       r: Math.random() * 2,
-      s: Math.random() * 1.5 + 0.3
+      s: Math.random() * 1.2 + 0.3
     });
   }
 
-  function draw() {
+  function animate() {
     ctx.clearRect(0,0,canvas.width,canvas.height);
+
     ctx.fillStyle = "#ff003c";
 
     particles.forEach(p => {
@@ -234,16 +243,17 @@ window.onload = () => {
       ctx.fill();
 
       p.y += p.s;
+
       if (p.y > canvas.height) {
         p.y = 0;
         p.x = Math.random() * canvas.width;
       }
     });
 
-    requestAnimationFrame(draw);
+    requestAnimationFrame(animate);
   }
 
-  draw();
+  animate();
 };
 </script>
 
