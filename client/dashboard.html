@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Dashboard Block Jogos</title>
+</head>
+
+<body style="background:#0a0a0a;color:white;text-align:center;padding-top:60px;">
+
+<h1>Bem-vindo ao Block Jogos 🚀</h1>
+
+<button onclick="logout()">Sair</button>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+const supabase = window.supabase.createClient(
+  "https://hwffqfjimqjrapzesbaa.supabase.co",
+  "sb_publishable_7-r8PC-K_jdJ0wZeTcctzg_-YT9M9wp"
+);
+
+// 🔐 LOGOUT
+async function logout() {
+  await supabase.auth.signOut();
+  window.location.href = "index.html";
+}
+
+// 🔥 PROTEÇÃO (SE NÃO TIVER LOGIN, VOLTA)
+(async () => {
+  const { data } = await supabase.auth.getSession();
+
+  if (!data.session) {
+    window.location.href = "index.html";
+  }
+})();
+</script>
+
+</body>
+</html>
