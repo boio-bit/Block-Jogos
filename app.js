@@ -3,15 +3,19 @@ const supabaseKey = "sb_publishable_7-r8PC-K_jdJ0wZeTcctzg_-YT9M9wp";
 
 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-// TABS
+// ELEMENTOS
+const loginBox = document.getElementById("loginBox");
+const registerBox = document.getElementById("registerBox");
+
+// 🔥 TROCA DE TELA (CORRIGIDO)
 function showLogin() {
-  document.getElementById("loginBox").classList.remove("hidden");
-  document.getElementById("registerBox").classList.add("hidden");
+  loginBox.classList.remove("hidden");
+  registerBox.classList.add("hidden");
 }
 
 function showRegister() {
-  document.getElementById("registerBox").classList.remove("hidden");
-  document.getElementById("loginBox").classList.add("hidden");
+  registerBox.classList.remove("hidden");
+  loginBox.classList.add("hidden");
 }
 
 // 🔐 LOGIN
@@ -26,21 +30,18 @@ async function login() {
 
   if (error) return msg("Erro no login");
 
-  window.location.href = "dashboard.html";
+  msg("Login OK 🚀");
 }
 
-// 🆕 REGISTRO
+// 🆕 REGISTER
 async function register() {
   const email = document.getElementById("regEmail").value;
   const password = document.getElementById("regPassword").value;
   const confirm = document.getElementById("regConfirm").value;
   const terms = document.getElementById("termsCheck").checked;
 
-  if (password !== confirm)
-    return msg("Senhas não coincidem");
-
-  if (!terms)
-    return msg("Aceite os termos");
+  if (password !== confirm) return msg("Senhas diferentes");
+  if (!terms) return msg("Aceite os termos");
 
   const { error } = await supabase.auth.signUp({
     email,
@@ -49,10 +50,10 @@ async function register() {
 
   if (error) return msg("Erro ao criar conta");
 
-  msg("Verifique seu email 🚀");
+  msg("Conta criada! Verifique o email 🚀");
 }
 
 // MSG
-function msg(text) {
-  document.getElementById("msg").innerText = text;
+function msg(t) {
+  document.getElementById("msg").innerText = t;
 }
