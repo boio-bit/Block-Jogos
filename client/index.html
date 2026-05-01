@@ -8,23 +8,58 @@
 
 <body>
 
-<div class="card">
+<div id="particles"></div>
 
-  <h1>BLOCK JOGOS</h1>
-  <p class="sub">Login do sistema</p>
+<div class="container">
 
-  <input id="email" type="email" placeholder="Email">
-  <input id="password" type="password" placeholder="Senha">
+  <div class="card">
 
-  <button onclick="login()">Entrar</button>
-  <button class="ghost" onclick="autoLogin()">Entrar direto</button>
+    <h1>BLOCK JOGOS</h1>
 
-  <p id="msg"></p>
+    <!-- TABS -->
+    <div class="tabs">
+      <button onclick="showLogin()">Entrar</button>
+      <button onclick="showRegister()">Criar conta</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="loginBox">
+
+      <input id="loginEmail" type="email" placeholder="Gmail">
+      <input id="loginPassword" type="password" placeholder="Senha">
+
+      <button onclick="login()">Entrar</button>
+
+    </div>
+
+    <!-- REGISTER -->
+    <div id="registerBox" class="hidden">
+
+      <input id="regEmail" type="email" placeholder="Gmail">
+      <input id="regPassword" type="password" placeholder="Senha">
+      <input id="regConfirm" type="password" placeholder="Confirmar senha">
+
+      <div class="terms">
+        <input type="checkbox" id="termsCheck">
+        <label>
+          Concordo com os
+          <a href="terms.html" target="_blank">termos</a>
+        </label>
+      </div>
+
+      <button onclick="register()">Criar conta</button>
+
+    </div>
+
+    <p id="msg"></p>
+
+  </div>
 
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script src="app.js"></script>
+<script src="particles.js"></script>
 
 </body>
 </html>
