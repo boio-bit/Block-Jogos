@@ -3,7 +3,91 @@
 <head>
 <meta charset="UTF-8">
 <title>Block Jogos</title>
-<link rel="stylesheet" href="styles.css">
+
+<style>
+body {
+  margin: 0;
+  background: #0a0a0a;
+  overflow: hidden;
+  font-family: Arial;
+  color: white;
+}
+
+#particles {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card {
+  width: 350px;
+  padding: 20px;
+  background: rgba(0,0,0,0.75);
+  border: 1px solid #ff003c;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 0 25px #ff003c33;
+}
+
+h1 {
+  color: #ff003c;
+  text-shadow: 0 0 10px #ff003c;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 6px 0;
+  border-radius: 8px;
+  border: none;
+  background: #111;
+  color: white;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  background: #ff003c;
+  border: none;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:hover {
+  transform: scale(1.03);
+}
+
+.tabs button {
+  width: 49%;
+  background: transparent;
+  border: 1px solid #ff003c;
+}
+
+.hidden {
+  display: none;
+}
+
+label {
+  font-size: 12px;
+}
+
+a {
+  color: #ff003c;
+}
+</style>
+
 </head>
 
 <body>
@@ -21,40 +105,10 @@
       <button onclick="showRegister()">Criar conta</button>
     </div>
 
-    <div id="loginBox">
-      <input id="loginEmail" type="email" placeholder="Gmail">
-      <input id="loginPassword" type="password" placeholder="Senha">
-      <button onclick="login()">Entrar</button>
-    </div>
-
-    <div id="registerBox" style="display:none;">
-      <input id="regEmail" type="email" placeholder="Gmail">
-      <input id="regPassword" type="password" placeholder="Senha">
-      <input id="regConfirm" type="password" placeholder="Confirmar senha">
-
-      <label>
-        <input type="checkbox" id="termsCheck">
-        Concordo com os <a href="terms.html" target="_blank">termos</a>
-      </label>
-
-      <button onclick="register()">Criar conta</button>
-    </div>
-
-    <p id="msg"></p>
-
-  </div>
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-<script src="app.js"></script>
-<script src="particles.js"></script>
-
-</body>
     <!-- LOGIN -->
     <div id="loginBox">
 
-      <input id="loginEmail" type="email" placeholder="Gmail">
+      <input id="loginEmail" placeholder="Email">
       <input id="loginPassword" type="password" placeholder="Senha">
 
       <button onclick="login()">Entrar</button>
@@ -64,16 +118,14 @@
     <!-- REGISTER -->
     <div id="registerBox" class="hidden">
 
-      <input id="regEmail" type="email" placeholder="Gmail">
+      <input id="regEmail" placeholder="Email">
       <input id="regPassword" type="password" placeholder="Senha">
       <input id="regConfirm" type="password" placeholder="Confirmar senha">
 
-      <div class="terms">
+      <label>
         <input type="checkbox" id="termsCheck">
-        <label>
-          Concordo com os <a href="terms.html">termos</a>
-        </label>
-      </div>
+        Concordo com os <a href="terms.html" target="_blank">termos</a>
+      </label>
 
       <button onclick="register()">Criar conta</button>
 
@@ -86,8 +138,114 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-<script src="app.js"></script>
-<script src="particles.js"></script>
+
+<script>
+// ===== SUPABASE =====
+const supabaseUrl = "https://hwffqfjimqjrapzesbaa.supabase.co";
+const supabaseKey = "SUA_KEY_AQUI";
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+// ===== TELA =====
+const loginBox = document.getElementById("loginBox");
+const registerBox = document.getElementById("registerBox");
+
+function showLogin() {
+  loginBox.classList.remove("hidden");
+  registerBox.classList.add("hidden");
+}
+
+function showRegister() {
+  loginBox.classList.add("hidden");
+  registerBox.classList.remove("hidden");
+}
+
+function msg(t) {
+  document.getElementById("msg").innerText = t;
+}
+
+// ===== LOGIN =====
+async function login() {
+  const email = loginEmail.value;
+  const password = loginPassword.value;
+
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) return msg("Erro no login");
+
+  msg("Login OK 🚀");
+}
+
+// ===== REGISTER =====
+async function register() {
+  const email = regEmail.value;
+  const password = regPassword.value;
+  const confirm = regConfirm.value;
+  const terms = termsCheck.checked;
+
+  if (password !== confirm) return msg("Senhas diferentes");
+  if (!terms) return msg("Aceite os termos");
+
+  const { error } = await supabase.auth.signUp({
+    email,
+    password
+  });
+
+  if (error) return msg("Erro ao criar conta");
+
+  msg("Conta criada! Verifique email 🚀");
+}
+
+// ===== PARTICLES (GARANTIDO FUNCIONAR) =====
+window.onload = () => {
+  const canvas = document.createElement("canvas");
+  document.getElementById("particles").appendChild(canvas);
+
+  const ctx = canvas.getContext("2d");
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  resize();
+  window.addEventListener("resize", resize);
+
+  let particles = [];
+
+  for (let i = 0; i < 100; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 2,
+      s: Math.random() * 1.5 + 0.3
+    });
+  }
+
+  function draw() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = "#ff003c";
+
+    particles.forEach(p => {
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fill();
+
+      p.y += p.s;
+      if (p.y > canvas.height) {
+        p.y = 0;
+        p.x = Math.random() * canvas.width;
+      }
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+};
+</script>
 
 </body>
 </html>
