@@ -14,7 +14,6 @@ body {
   overflow: hidden;
 }
 
-/* PARTICLES */
 #particles {
   position: fixed;
   width: 100%;
@@ -22,7 +21,6 @@ body {
   z-index: 0;
 }
 
-/* CONTAINER */
 .container {
   position: relative;
   z-index: 1;
@@ -32,14 +30,12 @@ body {
   align-items: center;
 }
 
-/* CARD LOGIN */
 .card {
   width: 340px;
   padding: 25px;
   border-radius: 15px;
-  background: rgba(0,0,0,0.75);
+  background: rgba(0,0,0,0.8);
   border: 1px solid #ff003c;
-  box-shadow: 0 0 25px rgba(255,0,60,0.3);
   text-align: center;
 }
 
@@ -73,8 +69,13 @@ button:hover {
   transform: scale(1.03);
 }
 
+.tabs {
+  display: flex;
+  gap: 5px;
+}
+
 .tabs button {
-  width: 49%;
+  width: 50%;
   background: transparent;
   border: 1px solid #ff003c;
 }
@@ -83,12 +84,11 @@ button:hover {
   display: none;
 }
 
-a {
-  color: #ff003c;
+#msg {
   font-size: 12px;
+  margin-top: 10px;
 }
 </style>
-
 </head>
 
 <body>
@@ -109,28 +109,23 @@ a {
 
     <!-- LOGIN -->
     <div id="loginBox">
-
-      <input id="loginEmail" type="email" placeholder="Email">
-      <input id="loginPassword" type="password" placeholder="Senha">
-
+      <input id="email" type="email" placeholder="Email">
+      <input id="password" type="password" placeholder="Senha">
       <button onclick="login()">Entrar</button>
-
     </div>
 
     <!-- REGISTER -->
     <div id="registerBox" class="hidden">
-
-      <input id="regEmail" type="email" placeholder="Email">
-      <input id="regPassword" type="password" placeholder="Senha">
-      <input id="regConfirm" type="password" placeholder="Confirmar senha">
+      <input id="email2" type="email" placeholder="Email">
+      <input id="password2" type="password" placeholder="Senha">
+      <input id="confirm" type="password" placeholder="Confirmar senha">
 
       <label>
-        <input type="checkbox" id="termsCheck">
+        <input type="checkbox" id="terms">
         Concordo com os <a href="terms.html" target="_blank">termos</a>
       </label>
 
       <button onclick="register()">Criar conta</button>
-
     </div>
 
     <p id="msg"></p>
@@ -147,11 +142,7 @@ const supabaseUrl = "https://hwffqfjimqjrapzesbaa.supabase.co";
 const supabaseKey = "SUA_KEY_AQUI";
 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-// ================= ELEMENTOS =================
-const loginBox = document.getElementById("loginBox");
-const registerBox = document.getElementById("registerBox");
-
-// ================= TABS =================
+// ================= UI =================
 function showLogin() {
   loginBox.classList.remove("hidden");
   registerBox.classList.add("hidden");
@@ -162,15 +153,14 @@ function showRegister() {
   registerBox.classList.remove("hidden");
 }
 
-// ================= MSG =================
 function msg(t) {
   document.getElementById("msg").innerText = t;
 }
 
 // ================= LOGIN =================
 async function login() {
-  const email = loginEmail.value;
-  const password = loginPassword.value;
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
   const { error } = await supabase.auth.signInWithPassword({
     email,
@@ -188,12 +178,12 @@ async function login() {
 
 // ================= REGISTER =================
 async function register() {
-  const email = regEmail.value;
-  const password = regPassword.value;
-  const confirm = regConfirm.value;
-  const terms = termsCheck.checked;
+  const email = document.getElementById("email2").value;
+  const password = document.getElementById("password2").value;
+  const confirm = document.getElementById("confirm").value;
+  const terms = document.getElementById("terms").checked;
 
-  if (password !== confirm) return msg("Senhas diferentes");
+  if (password !== confirm) return msg("Senhas não coincidem");
   if (!terms) return msg("Aceite os termos");
 
   const { error } = await supabase.auth.signUp({
@@ -204,56 +194,55 @@ async function register() {
   if (error) return msg("Erro ao criar conta");
 
   msg("Conta criada! Verifique seu email 🚀");
+
+  setTimeout(() => {
+    showLogin();
+  }, 1200);
 }
 
 // ================= PARTICLES SIMPLES =================
 window.onload = () => {
   const canvas = document.createElement("canvas");
   document.getElementById("particles").appendChild(canvas);
-
   const ctx = canvas.getContext("2d");
 
   function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
   }
-
   resize();
   window.addEventListener("resize", resize);
 
-  let particles = [];
+  let p = [];
 
-  for (let i = 0; i < 80; i++) {
-    particles.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      r: Math.random() * 2,
-      s: Math.random() * 1.2 + 0.3
+  for (let i = 0; i < 60; i++) {
+    p.push({
+      x: Math.random() * innerWidth,
+      y: Math.random() * innerHeight,
+      s: Math.random() * 1.5
     });
   }
 
-  function animate() {
+  function draw() {
     ctx.clearRect(0,0,canvas.width,canvas.height);
-
     ctx.fillStyle = "#ff003c";
 
-    particles.forEach(p => {
+    p.forEach(p1 => {
       ctx.beginPath();
-      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.arc(p1.x,p1.y,2,0,Math.PI*2);
       ctx.fill();
 
-      p.y += p.s;
+      p1.y += p1.s;
 
-      if (p.y > canvas.height) {
-        p.y = 0;
-        p.x = Math.random() * canvas.width;
+      if (p1.y > innerHeight) {
+        p1.y = 0;
       }
     });
 
-    requestAnimationFrame(animate);
+    requestAnimationFrame(draw);
   }
 
-  animate();
+  draw();
 };
 </script>
 
